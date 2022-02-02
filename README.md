@@ -32,7 +32,7 @@ Comes in two lovely floppy diskettes.
 
 ## Screenshots 
 
-Boot time from initially floppy read action to usable shell (around 1m27s).
+Boot time from when the floppy is triggered to usable shell (around 1m27s).
 <img src="./images/boottime.jpg" width="500" height="330" />
 
 ---
