@@ -86,15 +86,23 @@ Some generic must-have features
 
 Processor configuration
 
+<img src="./images/cpu.jpg" width="150" height="200" />
+
     - Processor -> Family -> 486DX
     - Processor -> Load address -> 0x400000
 
 The motherboard supports both ISA and PCI, so...
 
+<img src="./images/mobo.jpg" width="150" height="200" />
+
+
     - Bus -> ISA support
     - Device drivers -> PCI support
 
 For the block devices, the machine uses SCSI/PATA.
+
+<img src="./images/hdd.jpg" width="150" height="200" />
+<img src="./images/cdrom.jpg" width="150" height="200" />
 
     - Device drivers -> Block devices -> Normal floppy support
     - Device drivers -> SCSI -> SCSI device support
@@ -105,6 +113,9 @@ For the block devices, the machine uses SCSI/PATA.
     - Device drivers -> SATA/PATA -> Legacy ISA PATA support
 
 For the VGA
+
+<img src="./images/vga.jpg" width="300" height="200" />
+
 
     - Device drivers -> Graphics -> Framebuffer support -> S3 Trio/Virge 
 
@@ -125,6 +136,8 @@ Mouse (module) and keyboard
     - Device drivers -> Input device support -> Mice -> Serial 
 
 Sound card (ISA PnP)
+
+<img src="./images/sb16.jpg" width="300" height="200" />
 
     - Device drivers -> PNP support -> ISA PNP   
     - Device drivers -> Sound card support -> ISA devices -> SB16 PnP    
