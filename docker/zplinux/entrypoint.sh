@@ -23,7 +23,7 @@ rm syslinux.cfg
 echo "Unmounting floppy..."
 umount /mnt
 
-# Kernel modules
+# Kernel modules (& cmatrix)
 
 echo "Creating and mount kernel modules floppy..."
 dd if=/dev/zero of=zplinux_modules.img bs=512 count=2880
@@ -45,6 +45,8 @@ depmod -a
 echo "Done - I bid you farewell, adventurer!"
 EOF
 chmod +x /mnt/install_modules.sh
+echo "Copying cmatrix as a bonus..."
+cp -r /floppies/cmatrix /mnt/cmatrix && rm -f /floppies/cmatrix
 echo "Unmounting floppy..."
 umount /mnt
 

@@ -50,6 +50,8 @@ RUN cd busybox-1.35.0 && \
     mkdir -p etc/init.d && \
     mkdir sys && \
     mkdir tmp && \
+    mkdir -p usr/share/terminfo/l && \
+    cp /toolchain/i486-linux-musl/usr/share/terminfo/l/linux usr/share/terminfo/l/ && \
     mknod dev/console c 5 1 && \
     mknod dev/null c 1 3
 
@@ -75,5 +77,6 @@ WORKDIR /floppies
 
 COPY floppy.img zplinux.img
 COPY entrypoint.sh entrypoint.sh
+COPY cmatrix cmatrix
 
 ENTRYPOINT /floppies/entrypoint.sh
