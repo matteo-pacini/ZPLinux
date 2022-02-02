@@ -30,10 +30,14 @@ Comes in two lovely floppy diskettes.
 
 ---
 
-## Screenshots 
+## Screenshots & Videos
 
 Boot time from when the floppy is triggered to usable shell (around 1m27s).
 <img src="./images/boottime.jpg" width="500" height="330" />
+
+Full cold-boot video
+
+https://user-images.githubusercontent.com/3139724/152242129-2d1fa038-bad1-4fbe-9fbb-e9b857d943e8.mov
 
 ---
 
