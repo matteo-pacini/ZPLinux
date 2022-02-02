@@ -12,22 +12,6 @@ Comes in two lovely floppy diskettes.
 
 ---
 
-## Screenshots 
-
-To be uploaded
-
----
-
-## Screenshots (QEMU)
-
-<img src="./images/qemu_intro.png" width="500" height="330" />
-
-<img src="./images/qemu_mem.png" width="500" height="330" />
-
-<img src="./images/qemu_modules.png" width="500" height="330" />
-
----
-
 ## Target Machine
 
 - **Motherboard**: Jetway-437 (VESA, PCI)
@@ -46,13 +30,24 @@ To be uploaded
 
 ---
 
-## Build machine
+## Screenshots 
 
-- Macbook Pro M1 Max 64GB (10 core)
+Boot time from initially floppy read action to usable shell (around 1m27s).
+<img src="./images/boottime.jpg" width="500" height="330" />
 
 ---
 
-## Ideas & Solutions
+## More Screenshots (QEMU)
+
+<img src="./images/qemu_intro.png" width="500" height="330" />
+
+<img src="./images/qemu_mem.png" width="500" height="330" />
+
+<img src="./images/qemu_modules.png" width="500" height="330" />
+
+---
+
+## Problems & Solutions
 
 - I want a modern kernel built with a modern toolchain
     - SOLUTION: **Build a bespoke i486 toolchain, and build the kernel with it**
