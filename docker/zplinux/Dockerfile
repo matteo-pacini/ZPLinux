@@ -77,6 +77,5 @@ WORKDIR /floppies
 
 COPY floppy.img zplinux.img
 COPY entrypoint.sh entrypoint.sh
-COPY cmatrix cmatrix
 
 ENTRYPOINT /floppies/entrypoint.sh
