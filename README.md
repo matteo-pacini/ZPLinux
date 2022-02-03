@@ -4,7 +4,9 @@
     
 A tailored Linux release for my 486 FreeDOS machine.
 
-(Yeah, that's [cmatrix](https://github.com/abishekvashok/cmatrix) burning the CPU)
+(Toolchain and distro built with Docker)
+
+(Yeah, that's [cmatrix](https://github.com/abishekvashok/cmatrix) burning the 66Mhz CPU)
 
 Comes in two lovely floppy diskettes.
 
@@ -111,7 +113,7 @@ For the block devices, the machine uses SCSI/PATA.
     - Device drivers -> SATA/PATA -> Generic platform device PATA support
     - Device drivers -> SATA/PATA -> Legacy ISA PATA support
 
-For the VGA
+For the VGA (module)
 
 <img src="./images/vga.jpg" width="300" height="200" />
 
@@ -134,7 +136,7 @@ Mouse (module) and keyboard
     - Device drivers -> Input device support -> Keyboards -> AT
     - Device drivers -> Input device support -> Mice -> Serial 
 
-Sound card (ISA PnP)
+Sound card (Vibra16 - ISA PnP)
 
 <img src="./images/sb16.jpg" width="300" height="200" />
 
@@ -177,7 +179,11 @@ This image builds a `i486-linux-musl-*` prefixed cross-compiler toolchain in `/t
 
 It is the base image for the `zplinux` one.
 
-It also includes ncurses and zlib.
+Cross-compiled libraries:
+- ncurses
+- zlib
+- lixml2
+- gettext
 
 ### zplinux
 
@@ -189,7 +195,7 @@ The floppy disk(s) are created at runtime by the entrypoint script.
 
 ## Running
 
-    # Build toolchain image
+    # Build toolchain image (grab a coffee)
     docker build -t 486toolchain ./486toolchain 
     # Build zplinux image
      docker build -t zplinux ./zplinux

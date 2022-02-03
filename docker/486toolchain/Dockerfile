@@ -2,7 +2,8 @@
 
 FROM alpine:latest
 
-RUN apk add --update --no-cache --virtual .build-deps build-base curl gawk flex bison file git rsync perl texinfo
+RUN apk add --update --no-cache --virtual .build-deps build-base pkgconfig && \
+    apk add --update --no-cache --virtual .situational-build-deps curl gawk flex bison file git rsync perl texinfo
 
 WORKDIR /src
 
@@ -116,8 +117,19 @@ RUN echo "int main() { return 0; }" | i486-linux-musl-gcc -x c --static -o /dev/
     file /tmp/c.test | grep -q "ELF 32-bit LSB executable" && \
     file /tmp/c.test | grep -q "80386"
 
+# Create a pkg-config wrapper for the toolchain
+# https://autotools.info/pkgconfig/cross-compiling.html
+RUN echo "#!/bin/sh" > /toolchain/bin/i486-linux-musl-pkg-config && \
+    echo 'SYSROOT=/toolchain/i486-linux-musl' >> /toolchain/bin/i486-linux-musl-pkg-config && \
+    echo 'export PKG_CONFIG_PATH=' >> /toolchain/bin/i486-linux-musl-pkg-config && \
+    echo 'export PKG_CONFIG_LIBDIR=${SYSROOT}/usr/lib/pkgconfig:${SYSROOT}/usr/share/pkgconfig' >> /toolchain/bin/i486-linux-musl-pkg-config && \
+    echo 'export PKG_CONFIG_SYSROOT_DIR=${SYSROOT}' >> /toolchain/bin/i486-linux-musl-pkg-config && \
+    echo 'exec pkg-config "$@"' >> /toolchain/bin/i486-linux-musl-pkg-config && \
+    chmod +x /toolchain/bin/i486-linux-musl-pkg-config
+
 # Download, extract, configure, build and install ncurses
 # https://www.linuxfromscratch.org/lfs/view/development/chapter06/ncurses.html
+# Note I: --enable-pc-files explodes without setting PKG_CONFIG_LIBDIR!
 RUN curl https://ftp.gnu.org/pub/gnu/ncurses/ncurses-6.3.tar.gz -o ncurses.tar.gz && \
     tar xzf ncurses.tar.gz && \
     cd ncurses-6.3 && \
@@ -131,6 +143,8 @@ RUN curl https://ftp.gnu.org/pub/gnu/ncurses/ncurses-6.3.tar.gz -o ncurses.tar.g
     --without-ada \
     --disable-stripping \
     --enable-widec \
+    --enable-pc-files \
+    PKG_CONFIG_LIBDIR="/usr/lib/pkgconfig" \
     CFLAGS="-Os -g0 -march=i486 -mcpu=i486 -mtune=i486"  \
     CXXFLAGS="-g0 -Os -march=i486 -mcpu=i486 -mtune=i486" \
     LDFLAGS="-s" && \
@@ -155,8 +169,34 @@ RUN curl https://zlib.net/zlib-1.2.11.tar.xz -o zlib.tar.xz && \
     make DESTDIR=/toolchain/i486-linux-musl install && \
     cd .. && rm -rf zlib.tar.xz zlib-1.2.11
 
-# Remove all dependencies but build-essential
-RUN apk del .build-deps
+RUN apk add --update --no-cache --virtual .libxml2-deps wget && \
+    wget ftp://xmlsoft.org/libxml2/libxml2-2.9.11.tar.gz && \
+    tar xzf libxml2-2.9.11.tar.gz && \
+    cd libxml2-2.9.11 && \
+    ./configure --prefix=/usr --host=i486-linux-musl --without-threads \
+        CFLAGS="-Os -g0 -march=i486 -mcpu=i486 -mtune=i486"  \
+        CXXFLAGS="-g0 -Os -march=i486 -mcpu=i486 -mtune=i486" \
+        LDFLAGS="-s" && \
+    make -j$(nproc --all) && \
+    make DESTDIR=/toolchain/i486-linux-musl install && \
+    cd .. && rm -rf libxml2-2.9.11.tar.gz libxml2-2.9.11 && \
+    apk del .libxml2-deps
+
+# Download, extract, configure, build and install gettext
+RUN curl https://ftp.gnu.org/pub/gnu/gettext/gettext-0.21.tar.gz -o gettext-0.21.tar.gz && \
+    tar xzf gettext-0.21.tar.gz && \
+    cd gettext-0.21 && \
+    ./configure --prefix=/usr --host=i486-linux-musl \
+        --disable-threads \
+        CFLAGS="-Os -g0 -march=i486 -mcpu=i486 -mtune=i486"  \
+        CXXFLAGS="-g0 -Os -march=i486 -mcpu=i486 -mtune=i486" \
+        LDFLAGS="-s" && \
+    make -j$(nproc --all) && \
+    make DESTDIR=/toolchain/i486-linux-musl install && \
+    cd .. && rm -rf gettext-0.21.tar.gz gettext-0.21
+
+# Remove all situational build dependencies
+RUN apk del .situational-build-deps
 
 # Set ARCH and CROSS_COMPILE environment variables
 ENV ARCH="x86"

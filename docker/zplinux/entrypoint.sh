@@ -45,8 +45,6 @@ depmod -a
 echo "Done - I bid you farewell, adventurer!"
 EOF
 chmod +x /mnt/install_modules.sh
-echo "Copying cmatrix as a bonus..."
-cp -r /floppies/cmatrix /mnt/cmatrix && rm -f /floppies/cmatrix
 echo "Unmounting floppy..."
 umount /mnt
 
