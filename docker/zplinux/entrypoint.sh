@@ -23,28 +23,33 @@ rm syslinux.cfg
 echo "Unmounting floppy..."
 umount /mnt
 
-# Kernel modules (& cmatrix)
+# Kernel modules
 
-echo "Creating and mount kernel modules floppy..."
+echo "Creating and mounting kernel modules floppy..."
 dd if=/dev/zero of=zplinux_modules.img bs=512 count=2880
 echo "Formatting floppy..."
-mkfs.msdos zplinux_modules.img
+mkfs.ext2 zplinux_modules.img
 echo "Mounting floppy..."
 mount -o loop zplinux_modules.img /mnt
 echo "Copying kernel modules..."
 cp -r /zplinux/modules/lib /mnt/lib
-cat >> /mnt/install_modules.sh << 'EOF'
+echo "Copying libc.so..."
+cp /zplinux/libc.so /mnt/lib/libc.so
+cat >> /mnt/install.sh << 'EOF'
 #!/bin/sh
 clear
-echo "ZPLinux Kernel Modules Floppy v.0.1"
-echo "Copying modules..."
+echo "ZPLinux Kernel Modules & libc Floppy v.0.2"
+echo "Copying kernel modules..."
 rm -rf /lib
 cp -r lib /
 echo "Running depmod..."
 depmod -a 
+echo "Creating ld-musl-i386.so.1 symlinks (/lib/libc.so && /bin/ldd)..."
+ln -s /lib/libc.so /lib/ld-musl-i386.so.1
+ln -s /lib/ld-musl-i386.so.1 /bin/ldd
 echo "Done - I bid you farewell, adventurer!"
 EOF
-chmod +x /mnt/install_modules.sh
+chmod +x /mnt/install.sh
 echo "Unmounting floppy..."
 umount /mnt
 

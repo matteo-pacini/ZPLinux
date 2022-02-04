@@ -136,6 +136,7 @@ RUN curl https://ftp.gnu.org/pub/gnu/ncurses/ncurses-6.3.tar.gz -o ncurses-6.3.t
     --mandir=/usr/share/man \
     --with-shared \
     --without-debug \
+    --without-normal \
     --without-ada \
     --disable-stripping \
     --enable-widec \
@@ -146,8 +147,7 @@ RUN curl https://ftp.gnu.org/pub/gnu/ncurses/ncurses-6.3.tar.gz -o ncurses-6.3.t
     make -j$(nproc --all) && \
     make DESTDIR=/toolchain/i486-linux-musl TIC_PATH=$(pwd)/build/progs/tic install && \
     cd .. && rm -rf ncurses-6.3.tar.gz ncurses-6.3 && \
-    echo "INPUT(-lncursesw)" > /toolchain/i486-linux-musl/usr/lib/libncurses.so && \
-    echo "INPUT(-l:libncursesw.a)" > /toolchain/i486-linux-musl/usr/lib/libncurses.a
+    echo "INPUT(-lncursesw)" > /toolchain/i486-linux-musl/usr/lib/libncurses.so
 
 # Download, extract, configure, build and install zlib
 RUN curl https://zlib.net/zlib-1.2.11.tar.xz -o zlib-1.2.11.tar.xz && \
@@ -161,13 +161,14 @@ RUN curl https://zlib.net/zlib-1.2.11.tar.xz -o zlib-1.2.11.tar.xz && \
     ./configure --prefix=/usr && \
     make -j$(nproc --all) && \
     make DESTDIR=/toolchain/i486-linux-musl install && \
-    cd .. && rm -rf zlib-1.2.11.tar.xz zlib-1.2.11
+    cd .. && rm -rf zlib-1.2.11.tar.xz zlib-1.2.11 && \
+    rm /toolchain/i486-linux-musl/usr/lib/libz.a
 
 RUN apk add --update --no-cache --virtual .libxml2-deps wget && \
     wget ftp://xmlsoft.org/libxml2/libxml2-2.9.11.tar.gz && \
     tar xzf libxml2-2.9.11.tar.gz && \
     cd libxml2-2.9.11 && \
-    ./configure --prefix=/usr --host=i486-linux-musl --without-threads \
+    ./configure --prefix=/usr --host=i486-linux-musl --without-threads --disable-static \
         CFLAGS="-Os -g0 -march=i486 -mcpu=i486 -mtune=i486"  \
         CXXFLAGS="-g0 -Os -march=i486 -mcpu=i486 -mtune=i486" && \
     make -j$(nproc --all) && \
@@ -181,6 +182,7 @@ RUN curl https://ftp.gnu.org/pub/gnu/gettext/gettext-0.21.tar.gz -o gettext-0.21
     cd gettext-0.21 && \
     ./configure --prefix=/usr --host=i486-linux-musl \
         --disable-threads \
+        --disable-static \
         CFLAGS="-Os -g0 -march=i486 -mcpu=i486 -mtune=i486" \
         CXXFLAGS="-g0 -Os -march=i486 -mcpu=i486 -mtune=i486" && \
     make -j$(nproc --all) && \
@@ -207,19 +209,21 @@ RUN curl -L https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz -o bzip2-1.0.8.t
     cd bzip2-1.0.8 && \
     mv ../Makefile . && mv ../Makefile-libbz2_so . && \
     make -f Makefile-libbz2_so -j$(nproc --all) && \
-    make clean && \
-    make -j$(nproc --all) && \
-    make PREFIX=/toolchain/i486-linux-musl/usr install && \
     cp -av libbz2.so* /toolchain/i486-linux-musl/usr/lib/ && \
+    cp -av bzlib.h /toolchain/i486-linux-musl/usr/include/ && \
     cd .. && rm -rf bzip2-1.0.8.tar.gz bzip2-1.0.8 && \
-    mv libbz2.pc /toolchain/i486-linux-musl/usr/lib/pkgconfig/
+    mv libbz2.pc /toolchain/i486-linux-musl/usr/lib/pkgconfig/ && \
+    ln -s /toolchain/i486-linux-musl/usr/lib/libbz2.so.1.0 /toolchain/i486-linux-musl/usr/lib/libbz2.so
 
 # Download, extract, configure, build and install readline
 RUN curl https://ftp.gnu.org/gnu/readline/readline-8.1.2.tar.gz -o readline-8.1.2.tar.gz && \
     tar xzf readline-8.1.2.tar.gz && \
     cd readline-8.1.2 && \
     ./configure --prefix=/usr --host=i486-linux-musl \
-        --with-curses --enable-multibyte --disable-install-examples \
+        --with-curses \
+        --enable-multibyte \
+        --disable-install-examples \
+        --disable-static \
         CFLAGS="-Os -g0 -march=i486 -mcpu=i486 -mtune=i486"  \
         CXXFLAGS="-g0 -Os -march=i486 -mcpu=i486 -mtune=i486" && \
     make -j$(nproc --all) && \
@@ -234,6 +238,7 @@ RUN curl -L https://sourceforge.net/projects/pcre/files/pcre/8.45/pcre-8.45.tar.
         CFLAGS="-Os -g0 -march=i486 -mcpu=i486 -mtune=i486" \
         CXXFLAGS="-g0 -Os -march=i486 -mcpu=i486 -mtune=i486" \
         --prefix=/usr --host=i486-linux-musl \
+        --disable-static \
         --enable-unicode-properties \
         --enable-pcre16 \
         --enable-pcre32 \
@@ -251,7 +256,7 @@ RUN curl -L https://github.com/libffi/libffi/releases/download/v3.4.2/libffi-3.4
     ./configure \
         CFLAGS="-Os -g0 -march=i486 -mcpu=i486 -mtune=i486" \
         CXXFLAGS="-g0 -Os -march=i486 -mcpu=i486 -mtune=i486" \
-        --prefix=/usr --host=i486-linux-musl && \
+        --prefix=/usr --host=i486-linux-musl --disable-static && \
     make -j$(nproc --all) && \
     make DESTDIR=/toolchain/i486-linux-musl install && \
     cd .. && rm -rf libffi-3.4.2 libffi-3.4.2.tar.gz
@@ -270,6 +275,14 @@ RUN apk add --update --no-cache --virtual .glib-deps meson ninja && \
 
 # Remove all situational build dependencies
 RUN apk del .situational-build-deps
+
+# Strip unneeded from binaries & libraries
+RUN find /toolchain/bin -type f -executable -exec strip --strip-unneeded {} \; && \
+    find /toolchain/lib -type f -name "*.so*" -exec strip --strip-unneeded {} \; && \ 
+    find /toolchain/i486-linux-musl/bin -executable -type f -exec strip --strip-unneeded {} \; && \ 
+    find /toolchain/i486-linux-musl/lib -type f -name "*.so*" -exec i486-linux-musl-strip --strip-unneeded {} \; && \ 
+    find /toolchain/i486-linux-musl/usr/bin -type f -executable -exec i486-linux-musl-strip --strip-unneeded {} \; && \
+    find /toolchain/i486-linux-musl/usr/lib -type f -name "*.so*" -exec i486-linux-musl-strip --strip-unneeded {} \;
 
 # Set ARCH and CROSS_COMPILE environment variables
 ENV ARCH="x86"

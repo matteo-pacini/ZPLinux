@@ -63,13 +63,15 @@ RUN cd busybox-1.35.0/_install && \
     chown -R root:root . && \
     find . | cpio -H newc -o | gzip -9 > /zplinux/initramfs.cpio.gz
 
+RUN cp /toolchain/i486-linux-musl/lib/libc.so /zplinux/
+
 ##################
 # FLOPPIES STAGE #
 ##################
 
 FROM alpine:latest as floppies
 
-RUN apk add --update dosfstools
+RUN apk add --update e2fsprogs
 
 COPY --from=build /zplinux /zplinux
 

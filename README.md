@@ -14,6 +14,22 @@ Comes in two lovely floppy diskettes.
 
 ---
 
+## Changelog
+
+**v0.1**
+
+- Initial Release
+
+**v0.2**
+
+- Added `Real Time Clock` support in the kernel.
+- Safer toolchain (without `LDFLAGS="-s"`) / binaries and `.so` are now stripped via` *strip --strip-unneeded` at the end of toolchain build process.
+- Removed most of built static libraries - going fully dynamic whenever applicable.
+- Copied libc.so to the modules floppy - the script now creates the symlinks for the interpreter `/lib/ld-musl-i386.so.1` and `/bin/ldd`.
+- Non-boot diskettes are now `ext2` formatted.
+
+---
+
 ## Target Machine
 
 - **Motherboard**: Jetway-437 (VESA, PCI)
@@ -50,21 +66,6 @@ https://user-images.githubusercontent.com/3139724/152242129-2d1fa038-bad1-4fbe-9
 <img src="./images/qemu_mem.png" width="500" height="330" />
 
 <img src="./images/qemu_modules.png" width="500" height="330" />
-
----
-
-## Problems & Solutions
-
-- I want a modern kernel built with a modern toolchain
-    - SOLUTION: **Build a bespoke i486 toolchain, and build the kernel with it**
-- Glibc creates massive binaries and binary size is a top concern here
-    - SOLUTION: **use musl instead of glibc**
-- Cross-compiling on macOS is painful:
-    - Filesystem issues (e.g. filesystem not being case-sensitive by default)
-    - GNU tools don't always behave correctly
-    - M1 is based on ARM - a few tools may not run at all (e.g. syslinux)
-    - I don't want to pollute the filesystem of my Macbook.
-    - SOLUTION: **Use Docker**
 
 ---
 
