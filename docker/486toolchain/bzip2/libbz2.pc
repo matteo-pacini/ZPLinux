@@ -1,0 +1,13 @@
+prefix=/usr
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+sharedlibdir=${libdir}
+includedir=${prefix}/include
+
+Name: libbz2
+Description: BZip2 compression library
+Version: 1.0.8
+
+Requires:
+Libs: -L${libdir} -lbz2
+Cflags: -I${includedir}

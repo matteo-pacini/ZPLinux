@@ -1,7 +1,9 @@
 [properties]
 sys_root = '/toolchain/i486-linux-musl'
 c_args = '-Os -g0 -march=i486 -mcpu=i486 -mtune=i486'
-c_link_args = '-s'
+
+[paths]
+prefix = '/toolchain/i486-linux-musl/usr'
 
 [host_machine]
 system = 'linux'

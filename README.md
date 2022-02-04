@@ -184,6 +184,12 @@ Cross-compiled libraries:
 - zlib
 - lixml2
 - gettext
+- gzip
+- bzip2
+- readline
+- PCRE
+- libffi
+- GLib2
 
 ### zplinux
 
