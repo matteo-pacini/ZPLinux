@@ -1,5 +1,5 @@
 #!/bin/sh
-mount -t devtmpfs none /dev
+
 mount -t proc none /proc
 mount -t sysfs none /sys
 mdev -s
@@ -7,9 +7,9 @@ clear
 cat <<'EOF'
 .-.-----------.-.
 | |-ZPLinux---|#|
-| |-v0.2------| |
+| |-v0.3------| |
 | |-For-486DX-| |
-| |-with-<3---| |
+| |-with-<3---| | (& Nix)
 | "-----------' |
 |  .-----.-..   |
 |  |     | || |||
@@ -19,5 +19,6 @@ Original ASCII art by Edward Farrow (asciiart.eu).
 Author: Matteo Pacini <m+github@matteopacini.me>.
 Repository: https://github.com/Zi0P4tch0/ZPLinux.
 EOF
+
 sleep 3
 setsid cttyhack sh
