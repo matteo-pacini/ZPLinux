@@ -21,17 +21,21 @@ pkgs.runCommand "zplinux-floppy-a"
   ''
     set -euo pipefail
 
+    export TZ=UTC
+    export LC_ALL=C
+    export SOURCE_DATE_EPOCH=946684800
+
     mkdir -p "$out"
     IMG="$PWD/floppy.img"
 
     dd if=/dev/zero of="$IMG" bs=1 count=1474560
 
-    mformat -i "$IMG" -f 1440 ::
+    mformat -i "$IMG" -f 1440 -v ZPLINUX-A -N 0x1A2B3C4D ::
 
     # Put kernel+initrd and config under /SYSLINUX (8.3 names)
     mmd   -i "$IMG" ::/SYSLINUX
-    mcopy -i "$IMG" ${kerneli486}/bzImage                 ::/SYSLINUX/BZIMAGE
-    mcopy -i "$IMG" ${floppyAInitramfs}/initramfs.cpio.gz    ::/SYSLINUX/INITRD.GZ
+    mcopy -i "$IMG" ${kerneli486}/bzImage ::/SYSLINUX/BZIMAGE
+    mcopy -i "$IMG" ${floppyAInitramfs}/initramfs.cpio.gz ::/SYSLINUX/INITRD.GZ
 
     # Syslinux config (note: no leading slashes in paths)
     cat > syslinux.cfg <<'CFG'
@@ -51,5 +55,9 @@ pkgs.runCommand "zplinux-floppy-a"
 
     # Emit final image
     cp "$IMG" "$out/zplinux-floppy-a.img"
+
+    # Disk usage
+    ls -lh ${kerneli486}/bzImage \
+           ${floppyAInitramfs}/initramfs.cpio.gz > "$out/disk-usage.txt"
 
   ''

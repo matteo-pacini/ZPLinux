@@ -41,6 +41,10 @@
       in
       {
 
+        packages = {
+          zplinux-floppy-a = floppyA;
+        };
+
         apps = {
           default =
             let
@@ -54,7 +58,19 @@
               type = "app";
               program = "${script}/bin/run-in-qemu";
             };
+          checkFloppyADiskSpace =
+            let
+              script = pkgs.writeShellScriptBin "check-floppy-a-disk-space" ''
+                cat ${floppyA}/disk-usage.txt
+              '';
+            in
+            {
+              type = "app";
+              program = "${script}/bin/check-floppy-a-disk-space";
+            };
+
         };
+
       }
     );
 }
