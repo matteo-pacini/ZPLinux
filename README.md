@@ -28,6 +28,10 @@ Comes in two lovely floppy diskettes.
 - Copied libc.so to the modules floppy - the script now creates the symlinks for the interpreter `/lib/ld-musl-i386.so.1` and `/bin/ldd`.
 - Non-boot diskettes are now `ext2` formatted.
 
+**v0.3**
+
+- Ported toolchain and build system to Nix (rest TBW)
+
 ---
 
 ## Target Machine
@@ -163,62 +167,13 @@ PC speaker (module)
 
 TBW
 
----
-
-## Docker images
-
-### Provided files
-
-- `busybox-config` and `kernel-config` are self-explanatory.
-- `busybox-init` is the main initramfs script.
-- `entrypoint.sh` is the entrypoint script for the `zplinux` image that builds kernel and busybox, and also creates the floppies.
-- `floppy.img` is a dump of a physical floppy diskette, formatted under FreeDOS 1.3RC5 and with Syslinux 4.x installed on it
-
-### 486toolchain
-
-This image builds a `i486-linux-musl-*` prefixed cross-compiler toolchain in `/toolchain`.
-
-It is the base image for the `zplinux` one.
-
-Cross-compiled libraries:
-- ncurses
-- zlib
-- lixml2
-- gettext
-- gzip
-- bzip2
-- readline
-- PCRE
-- libffi
-- GLib2
-
-### zplinux
-
-This image compiles and packages the kernel and busybox at build time.
-
-The floppy disk(s) are created at runtime by the entrypoint script.
-
----
-
 ## Running
 
-    # Build toolchain image (grab a coffee)
-    docker build -t 486toolchain ./486toolchain 
-    # Build zplinux image
-     docker build -t zplinux ./zplinux
-    # Finalise zplinux build (privileged is required to mount the floppies)
-    docker run --rm -ti -v /some/output/folder:/data --privileged zplinux
+```bash
+nix run github:matteo-pacini/zplinux
+```
 
-    # Once the floppy is built, copy it to /data
-    docker-machine> cp /floppies/*.img /data
-    docker-machine> exit
-
-    # Flash it (or test it in QEMU - see below)
-    sudo dd if=/path/to/zplinux.img of=DEVICE bs=512 count=2880 conv=noerror,sync
-
-## QEMU
-
-    qemu-system-i386 -cpu 486 -m 16 -fda zplinux.img
+Note: compilation of the cross-toolchain may take a while.
 
 ## Must Read
 
