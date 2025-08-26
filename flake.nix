@@ -68,5 +68,41 @@
 
       };
 
+      devShells.x86_64-linux = {
+
+        kernel =
+          (pkgs.buildFHSEnv {
+            name = "kernel-devshell";
+            targetPkgs =
+              pkgs_:
+              (with pkgs_; [
+                pkg-config
+                ncurses
+                stdenv.cc
+                stdenv.cc.bintools
+                flex
+                bison
+                bc
+                pkgsi486.stdenv.cc.bintools.bintools
+                pkgsi486.stdenv.cc.cc
+              ]);
+            runScript = pkgs.writeScript "init.sh" ''
+              export CROSS_COMPILE=i486-unknown-linux-musl-
+              export ARCH=x86
+              export PKG_CONFIG_PATH=${pkgs.ncurses.dev}/lib/pkgconfig
+
+              cd $TMPDIR
+
+              tar xf ${kernel.src}
+              cd linux-${kernel.version}
+
+              cp ${./packages/kernel/kernel-config} .config
+
+              exec zsh
+            '';
+          }).env;
+
+      };
+
     };
 }

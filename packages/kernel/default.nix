@@ -1,10 +1,15 @@
 {
   pkgsi486,
   stdenv,
+  lib,
   fetchurl,
   flex,
   bison,
   bc,
+  ncurses,
+  pkg-config,
+
+  forMenuConfig ? false,
 }:
 stdenv.mkDerivation rec {
   pname = "zplinux-kernel";
@@ -22,6 +27,10 @@ stdenv.mkDerivation rec {
     flex
     bison
     bc
+  ]
+  ++ lib.optionals forMenuConfig [
+    ncurses
+    pkg-config
   ];
 
   env = {
