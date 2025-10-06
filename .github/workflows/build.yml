@@ -1,0 +1,30 @@
+name: build
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+
+      - name: Build 
+        run: |
+          nix build path:.#zplinuxFloppyA
+
+      - name: Upload floppy image artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: zplinux-floppy-a
+          path: ./result/zplinux-floppy-a.img
