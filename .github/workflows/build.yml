@@ -27,10 +27,6 @@ jobs:
           primary-key: zplinux-${{ hashFiles('**/*.nix', '**/flake.lock') }}
           # if there's no cache hit, restore a cache by this prefix
           restore-prefixes-first-match: zplinux-
-          # collect garbage until the Nix store size (in bytes) is at most this number
-          # before trying to save a new cache
-          # 1G = 1073741824
-          gc-max-store-size-linux: 1G
 
       - name: Build 
         run: |
