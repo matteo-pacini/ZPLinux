@@ -13,11 +13,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Clean Bloat
+      - name: Clean GH Runners Bloat
         uses: wimpysworld/nothing-but-nix@main
         with:
           hatchet-protocol: 'rampage'
           witness-carnage: true
+          nix-permission-edict: true
 
       - uses: nixbuild/nix-quick-install-action@v34
         with:
