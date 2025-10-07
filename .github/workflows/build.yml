@@ -13,10 +13,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Clean Bloat
+        uses: wimpysworld/nothing-but-nix@main
+        with:
+          hatchet-protocol: 'rampage'
+          witness-carnage: true
+
       - uses: nixbuild/nix-quick-install-action@v34
         with:
           nix_conf: |
-            experimental-features = nix-command flakes
             keep-env-derivations = true
             keep-outputs = true
 
