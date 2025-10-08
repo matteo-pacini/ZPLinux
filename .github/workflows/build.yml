@@ -5,6 +5,11 @@ on:
     branches: [master]
   workflow_dispatch:
 
+env:
+  ATTIC_CACHE_NAME: ${{ secrets.ATTIC_CACHE_NAME }}
+  ATTIC_CACHE_URL: ${{ secrets.ATTIC_CACHE_URL }}
+  ATTIC_TOKEN: ${{ secrets.ATTIC_TOKEN }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -26,17 +31,23 @@ jobs:
             keep-env-derivations = true
             keep-outputs = true
 
-      - name: Restore and save Nix store
-        uses: nix-community/cache-nix-action@v6
-        with:
-          # restore and save a cache using this key
-          primary-key: zplinux-${{ hashFiles('**/*.nix', '**/flake.lock') }}
-          # if there's no cache hit, restore a cache by this prefix
-          restore-prefixes-first-match: zplinux-
+      - name: Configure Attic cache
+        run: |
+          nix run nixpkgs#attic-client -- login \
+            "${{ env.ATTIC_CACHE_NAME }}" "${{ env.ATTIC_CACHE_URL }}" "${{ env.ATTIC_TOKEN }}"
+          nix run nixpkgs#attic-client -- use zplinux
 
       - name: Build 
         run: |
           nix build path:.#zplinuxFloppyA
+
+      - uses: nick-fields/retry@v3
+        name: Push to nix cache
+        with:
+          timeout_minutes: 7200
+          max_attempts: 5
+          retry_on: error
+          command: nix run nixpkgs#attic-client -- push zplinux ./result -j 3
 
       - name: Upload floppy image artifact
         uses: actions/upload-artifact@v4
