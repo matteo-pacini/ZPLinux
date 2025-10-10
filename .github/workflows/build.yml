@@ -26,10 +26,6 @@ jobs:
           nix-permission-edict: true
 
       - uses: nixbuild/nix-quick-install-action@v34
-        with:
-          nix_conf: |
-            keep-env-derivations = true
-            keep-outputs = true
 
       - name: Configure Attic cache
         run: |
