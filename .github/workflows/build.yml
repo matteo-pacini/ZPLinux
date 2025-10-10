@@ -23,9 +23,9 @@ jobs:
         with:
           hatchet-protocol: 'rampage'
           witness-carnage: true
-          nix-permission-edict: true
-
-      - uses: nixbuild/nix-quick-install-action@v34
+          
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@main
 
       - name: Configure Attic cache
         run: |
