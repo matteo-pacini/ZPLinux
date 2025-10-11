@@ -55,4 +55,9 @@ stdenv.mkDerivation rec {
     runHook postInstall
   '';
 
+  postInstall = ''
+    rm $out/lib/modules/${version}/source
+    rm $out/lib/modules/${version}/build
+  '';
+
 }
