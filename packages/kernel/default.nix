@@ -20,6 +20,8 @@ stdenv.mkDerivation rec {
     hash = "sha256-49ACW4cnjhRzPLMmcA8Xx8zrVNkgYisNX81YqIxoUMM=";
   };
 
+  dontAutoPatchelf = true;
+
   nativeBuildInputs = [
     # Unwrapped bintools and compiler
     pkgsi486.stdenv.cc.bintools.bintools

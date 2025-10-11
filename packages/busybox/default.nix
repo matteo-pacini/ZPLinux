@@ -11,6 +11,8 @@ pkgsi486.pkgsStatic.busybox.overrideAttrs (old: rec {
     hash = "sha256-+u6yRMNaNIozT0pZ5EYm7ocPsHtohNaMEK6LwZ+DppQ=";
   };
 
+  dontAutoPatchelf = true;
+
   preConfigure = ''
     make allnoconfig
     cp ${./busybox-config} .config
